@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-
-
-
+using System.Text.RegularExpressions;
 
 namespace ProjetEvents
 {
@@ -70,10 +68,10 @@ namespace ProjetEvents
                 "DateTime?",
                 "DateTimeOffset",
                 "DateTimeOffset?",
-                "null"
+                null
             };
 
-            //Récupération des events
+            // Récupération des events
             List<string> listeEvents = new List<string>();
 
             foreach (EventContentRoot e in eventsRoot)
@@ -93,13 +91,14 @@ namespace ProjetEvents
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine(" ---- " + d.Code);
 
-                            string path = (c.Name + "/" + g.Name + "/" + d.Code).ToLower().Trim();
+                            // Création et nettoyage du chemin 
+                            string path = ClearString(c.Name + "." + g.Name + "." + d.Code);
 
-                            //Vérification des doublons
+                            // Vérification des doublons
                             if (listeEvents.Contains(path) == true)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Doublon");
+                                Console.WriteLine("Event en double");
                             }
                             else
                             {
@@ -108,17 +107,16 @@ namespace ProjetEvents
                                 Console.WriteLine(path);
                             }
 
-                            //Récupération des types définis
+                            // Récupération des types définis
                             foreach (AideContentDataObject t in d.Types)
                             {
                                 string[] ty = t.Declaration.Split(" ");
                                 string[] typ = ty[1].ToString().Split("\r");
-                                string typeDefini = typ[0];
-                                listeTypes.Add(typeDefini);
+                                listeTypes.Add(typ[0]);
 
                                 foreach (AideContentDataObjectMember m in t.Details.Members)
                                 {
-                                    //Vérification des types (si définis ou pas)
+                                    // Vérification des types (si définis ou pas)
                                     if (listeTypes.Contains(m.FullTypeName))
                                     {
                                         Console.ForegroundColor = ConsoleColor.Green;
@@ -127,8 +125,11 @@ namespace ProjetEvents
                                     else
                                     {
                                         Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Le type n'est pas défini");
+                                        Console.WriteLine("Type non défini");
                                     }
+
+                                    // Génération fichiers 
+                                    //
                                 }
                             }
                         }
@@ -136,6 +137,26 @@ namespace ProjetEvents
                 }
                 Console.ForegroundColor = ConsoleColor.White;
             }
+        }
+
+        /// <summary>
+        /// Enlève les espaces vides et les accents d'une string
+        /// </summary>
+        /// <param name="str">La string à clean</param>
+        /// <returns>La string nettoyée</returns>
+        public static string ClearString(string str)
+        {
+            if (str == null)
+                return null;
+
+            str = Regex.Replace(str, @"[Ààâä]", "a");
+            str = Regex.Replace(str, @"[Çç]", "c");
+            str = Regex.Replace(str, @"[ÊÉÈéèê]", "e");
+            str = Regex.Replace(str, @"[îï]", "i");
+            str = Regex.Replace(str, @"[öô]", "o");
+            str = Regex.Replace(str, @"[Ùùüû]", "u");
+
+            return str.Trim();
         }
     }
 
