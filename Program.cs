@@ -204,10 +204,17 @@ namespace ProjetEvents
 
             //Création fichier
             string fileName = Path.Combine(subFolderName, fichier + ".cs");
-           // string contenu = "hello";
-            if (!File.Exists(fileName)) {
-                File.Create(fileName);
-            } else
+            if (!File.Exists(fileName))
+            {
+                //Création et remplissage fichier
+                 StreamWriter file = new StreamWriter(fileName);
+
+                 string nameSpace = "test";
+
+                 file.Write(nameSpace);
+                 file.Close();
+            }
+            else
             {
                 // Fichier déjà existant
             }
