@@ -49,6 +49,8 @@ namespace ProjetEvents
                 "float?",
                 "int",
                 "int?",
+                "System.Int32",
+                "System.Int32?",
                 "uint",
                 "uint?",
                 "nint",
@@ -78,21 +80,24 @@ namespace ProjetEvents
             {
                 foreach (EventContentCategory c in e.Categories)
                 {
+                    c.Name = ClearString(c.Name);
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine(" " + c.Name);
 
                     foreach (EventGroup g in c.Groups)
                     {
+                        g.Name = ClearString(g.Name);
                         Console.ForegroundColor = ConsoleColor.Cyan;
                         Console.WriteLine(" -- " + g.Name);
 
                         foreach (EventDetails d in g.Events)
                         {
+                            d.Code = ClearString(d.Code);
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine(" ---- " + d.Code);
 
-                            // Création et nettoyage du chemin 
-                            string path = ClearString(c.Name + "." + g.Name + "." + d.Code);
+                            // Création du chemin 
+                            string path = c.Name + "." + g.Name + "." + d.Code;
 
                             // Vérification des doublons
                             if (listeEvents.Contains(path) == true)
@@ -119,17 +124,33 @@ namespace ProjetEvents
                                     // Vérification des types (si définis ou pas)
                                     if (listeTypes.Contains(m.FullTypeName))
                                     {
-                                        Console.ForegroundColor = ConsoleColor.Green;
-                                        Console.WriteLine(m.FullTypeName);
+                                        //Console.ForegroundColor = ConsoleColor.Green;
+                                        //Console.WriteLine(m.FullTypeName);
                                     }
                                     else
                                     {
                                         Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Type non défini");
+                                        Console.WriteLine("Type non défini" + m.FullTypeName);
                                     }
 
-                                    // Génération fichiers 
-                                    //
+                                    /*  List<string> listeTypesUtilises = new List<string>();
+                                      listeTypesUtilises.Add(m.FullTypeName);
+
+                                      // Vérification des types 
+                                      foreach (string tp in listeTypesUtilises)
+                                      {
+                                          if (listeTypes.Contains(tp))
+                                          {
+
+                                          }
+                                          else
+                                          {
+                                              Console.ForegroundColor = ConsoleColor.Red;
+                                              Console.WriteLine("Type non défini " + m.FullTypeName);
+                                          }*/
+
+                                    //Création dossier, sous-dossier, fichier
+                                    GenerateFileAndFolder(c.Name, g.Name, d.Code);
                                 }
                             }
                         }
@@ -149,14 +170,48 @@ namespace ProjetEvents
             if (str == null)
                 return null;
 
+            str = Regex.Replace(str, @"[ÀÄÂ]", "A");
             str = Regex.Replace(str, @"[Ààâä]", "a");
-            str = Regex.Replace(str, @"[Çç]", "c");
-            str = Regex.Replace(str, @"[ÊÉÈéèê]", "e");
+            str = Regex.Replace(str, @"[Ç]", "C");
+            str = Regex.Replace(str, @"[ç]", "c");
+            str = Regex.Replace(str, @"[ÊÉÈ]", "E");
+            str = Regex.Replace(str, @"[éèê]", "e");
+            str = Regex.Replace(str, @"[ÏÎ]", "i");
             str = Regex.Replace(str, @"[îï]", "i");
+            str = Regex.Replace(str, @"[ÔÖ]", "o");
             str = Regex.Replace(str, @"[öô]", "o");
-            str = Regex.Replace(str, @"[Ùùüû]", "u");
+            str = Regex.Replace(str, @"[Ù]", "U");
+            str = Regex.Replace(str, @"[Ù]", "u");
 
             return str.Trim();
+        }
+
+        /// <summary>
+        /// Crée un dossier, un sous-dossier et un fichier 
+        /// </summary>
+        /// <param name="dossier"></param>
+        /// <param name="sousDossier"></param>
+        /// <param name="fichier"></param>
+        public static void GenerateFileAndFolder(string dossier, string sousDossier, string fichier)
+        {
+            //Création dossier
+            string folderName = @"C:\Users\AnaïsTORRES\source\repos\ProjetEvents\ProjetEvents\" + dossier;
+            Directory.CreateDirectory(folderName);
+
+            //Création sous-dossier
+            string subFolderName = Path.Combine(folderName, sousDossier);
+            Directory.CreateDirectory(subFolderName);
+
+            //Création fichier
+            string fileName = Path.Combine(subFolderName, fichier + ".cs");
+           // string contenu = "hello";
+            if (!File.Exists(fileName)) {
+                File.Create(fileName);
+            } else
+            {
+                // Fichier déjà existant
+            }
+
         }
     }
 
