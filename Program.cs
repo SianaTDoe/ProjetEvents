@@ -118,6 +118,9 @@ namespace ProjetEvents
                                 string[] ty = t.Declaration.Split(" ");
                                 string[] typ = ty[1].ToString().Split("\r");
                                 listeTypes.Add(typ[0]);
+                                listeTypes.Add(typ[0] + "[]");
+                                listeTypes.Add(t.ClassName);
+                                listeTypes.Add(t.ClassName + "[]");
 
                                 foreach (AideContentDataObjectMember m in t.Details.Members)
                                 {
@@ -132,22 +135,6 @@ namespace ProjetEvents
                                         Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine("Type non défini" + m.FullTypeName);
                                     }
-
-                                    /*  List<string> listeTypesUtilises = new List<string>();
-                                      listeTypesUtilises.Add(m.FullTypeName);
-
-                                      // Vérification des types 
-                                      foreach (string tp in listeTypesUtilises)
-                                      {
-                                          if (listeTypes.Contains(tp))
-                                          {
-
-                                          }
-                                          else
-                                          {
-                                              Console.ForegroundColor = ConsoleColor.Red;
-                                              Console.WriteLine("Type non défini " + m.FullTypeName);
-                                          }*/
 
                                     //Création dossier, sous-dossier, fichier
                                     GenerateFileAndFolder(c.Name, g.Name, d.Code);
@@ -207,18 +194,17 @@ namespace ProjetEvents
             if (!File.Exists(fileName))
             {
                 //Création et remplissage fichier
-                 StreamWriter file = new StreamWriter(fileName);
+                StreamWriter file = new StreamWriter(fileName);
 
-                 string nameSpace = "test";
-
-                 file.Write(nameSpace);
-                 file.Close();
+                //string constUsing = "using";
+                //file.Write("test");
+                file.Close();
             }
             else
             {
                 // Fichier déjà existant
             }
-
+            
         }
     }
 
