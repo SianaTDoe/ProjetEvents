@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <None Update="template.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>template.cs</LastGenOutput>
     </None>
   </ItemGroup>
